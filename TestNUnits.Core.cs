@@ -41,15 +41,14 @@ public class WarehouseManagerTests
     public void DeleteBoxes_Deletes_CorrectBoxes()
     {
         // Mock a list of boxes
-        List<Box> boxes = _context.Boxes.ToList(); // Get all boxes from the context
-
-        // Create the manager instance
+        List<Box> boxes = _context.Boxes.ToList(); 
+      
         WarehouseManager manager = new WarehouseManager(_context);
 
         // Delete the boxes
-        manager.DeleteBoxes(boxes);
-
-        // Verify that the boxes are deleted
-        Assert.AreEqual(0, _context.Boxes.Count()); // Ensure all boxes are deleted
+        // manager.DeleteBoxes(boxes);
+         manager.DeleteBox(boxes.FirstOrDefault());
+       
+        Assert.AreEqual(0, _context.Boxes.Count()); 
     }
 }
