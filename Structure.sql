@@ -14,7 +14,6 @@ CREATE TABLE Box (
   FOREIGN KEY (pallet_id) REFERENCES Pallet(id)
 );
 
-
 -- Add some dummy data
 INSERT INTO Pallet (id, name) VALUES (1, 'Pallet1');
 GO
@@ -39,3 +38,23 @@ GO
 
 INSERT INTO Box (id, barcode, is_opened, pallet_id, parent_box_id) VALUES (7, 'BC7', 0, NULL, 6);  
 GO
+
+
+
+
+-- This is the autoincrement PK version of structure:
+-- We can insert now without pass id due to it is IDENTITY(1,1)
+CREATE TABLE Pallet (
+  id INT IDENTITY(1,1) PRIMARY KEY,
+  name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Box (
+  id INT IDENTITY(1,1) PRIMARY KEY,
+  barcode VARCHAR(50) NOT NULL,
+  is_opened BIT DEFAULT 0,
+  pallet_id INT NULL,
+  parent_box_id INT NULL,
+  FOREIGN KEY (parent_box_id) REFERENCES Box(id),
+  FOREIGN KEY (pallet_id) REFERENCES Pallet(id)
+);
