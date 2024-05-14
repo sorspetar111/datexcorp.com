@@ -62,8 +62,12 @@ public class WarehouseManager
 }
 
 [Obsolete("Use WarehouseManager if you want to give entire control to EF. OTHERWISE delete OnDelete Behavior and due it with the recursive code.")]
-public class WarehouseManagerInternalCascade: WarehouseManager
+public class WarehouseManagerInternalCascade : WarehouseManager
 {
+
+    public WarehouseManagerInternalCascade(WarehouseContext context) : base(context)
+    {
+    }
 
     public List<Box> RecursiveTakeBox(Box box)
     {
