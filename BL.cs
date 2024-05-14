@@ -1,4 +1,5 @@
 
+// This version do not use cascade deletion. This is just some kind of recursive internal deletion with clasic ORM.
 
 public class WarehouseManager
 {
