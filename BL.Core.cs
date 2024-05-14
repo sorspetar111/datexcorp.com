@@ -1,5 +1,6 @@
 
-
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
 public class WarehouseContext : DbContext
@@ -14,6 +15,8 @@ public class WarehouseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Do not forget to recreate it when database scructure is update/created.
+        
         /*
         modelBuilder.Entity<Box>()
             .HasOne(b => b.Pallet)
@@ -27,19 +30,17 @@ public class WarehouseContext : DbContext
             .HasForeignKey(b => b.ParentBoxId)
             .OnDelete(DeleteBehavior.Restrict); 
         */
-        
+              
         modelBuilder.Entity<Box>()
             .HasOne(b => b.ParentBox)
             .WithMany(b => b.ChildrenBoxes)
             .HasForeignKey(b => b.ParentBoxId)
-            .OnDelete(DeleteBehavior.Cascade); 
+            .OnDelete(DeleteBehavior.Cascade); // commend this line if you wan to use WarehouseManagerInternalCascade 
+
+            
     }
 }
 
-
-
-using System.Collections.Generic;
-using System.Linq;
 
 public class WarehouseManager
 {
@@ -50,15 +51,28 @@ public class WarehouseManager
         _context = context;
     }
 
+    public void TakeBox(Box box)
+    {
+        // We no longer need recurisive due to DeleteBehavior.Cascade
+        _context.Remove(box);
+        _context.SaveChanges();     
+    }
+
+ 
+}
+
+[Obsolete("Use WarehouseManager if you want to give entire control to EF. OTHERWISE delete OnDelete Behavior and due it with the recursive code.")]
+public class WarehouseManagerInternalCascade: WarehouseManager
+{
+
     public List<Box> RecursiveTakeBox(Box box)
     {
         List<Box> boxList = new List<Box>();
         boxList.Add(box);
 
         FetchChildBoxes(box, boxList);
-
         DeleteBoxes(boxList);
-
+        
         return boxList;
     }
 
@@ -77,4 +91,7 @@ public class WarehouseManager
         _context.RemoveRange(boxList);
         _context.SaveChanges();
     }
+
 }
+
+
