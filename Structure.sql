@@ -58,3 +58,24 @@ CREATE TABLE Box (
   FOREIGN KEY (parent_box_id) REFERENCES Box(id),
   FOREIGN KEY (pallet_id) REFERENCES Pallet(id)
 );
+
+
+
+-- This is cascade deletion. If we need to use this version then in this case we need to not use recursive delation.
+-- Apart of that, we need to test with use EF.Core and Fluent API and delete cascade behaiviair
+CREATE TABLE Pallet (
+  id INT IDENTITY(1,1) PRIMARY KEY,
+  name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Box (
+  id INT IDENTITY(1,1) PRIMARY KEY,
+  barcode VARCHAR(50) NOT NULL,
+  is_opened BIT DEFAULT 0,
+  pallet_id INT NULL,
+  parent_box_id INT NULL,
+  FOREIGN KEY (parent_box_id) REFERENCES Box(id) ON DELETE CASCADE,
+  FOREIGN KEY (pallet_id) REFERENCES Pallet(id)
+);
+
+
