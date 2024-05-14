@@ -14,18 +14,25 @@ public class WarehouseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Configure the entities using fluent API
+        /*
         modelBuilder.Entity<Box>()
             .HasOne(b => b.Pallet)
             .WithMany(p => p.Boxes)
             .HasForeignKey(b => b.PalletId)
-            .OnDelete(DeleteBehavior.Restrict); // or Cascade if you want to delete dependent boxes when a pallet is deleted
+            .OnDelete(DeleteBehavior.Restrict); 
 
         modelBuilder.Entity<Box>()
             .HasOne(b => b.ParentBox)
             .WithMany(b => b.ChildrenBoxes)
             .HasForeignKey(b => b.ParentBoxId)
-            .OnDelete(DeleteBehavior.Restrict); // or Cascade if you want to delete dependent child boxes when a parent box is deleted
+            .OnDelete(DeleteBehavior.Restrict); 
+        */
+        
+        modelBuilder.Entity<Box>()
+            .HasOne(b => b.ParentBox)
+            .WithMany(b => b.ChildrenBoxes)
+            .HasForeignKey(b => b.ParentBoxId)
+            .OnDelete(DeleteBehavior.Cascade); 
     }
 }
 
