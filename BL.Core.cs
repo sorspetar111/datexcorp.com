@@ -57,9 +57,49 @@ public class WarehouseManager
         _context.Remove(box);
         _context.SaveChanges();     
     }
+}
+
+[Obsolete("Use WarehouseManager if you want to give entire control to EF. OTHERWISE delete OnDelete Behavior and due it with the recursive code.")]
+public class WarehouseManagerCoreInternalCascade: WarehouseManager
+{
+    private readonly WarehouseContext _context;
+
+    public WarehouseManager(WarehouseContext context)
+    {
+        _context = context;
+    }
+
+    public void TakeBox(Box box)
+    {
+        // Retrieve the box with its children from the context
+        var boxWithChildren = _context.Boxes.Include(b => b.ChildrenBoxes).SingleOrDefault(b => b.Id == box.Id);
+
+        if (boxWithChildren != null)
+        {
+            // Remove the box and all its children
+            _context.Boxes.RemoveRange(GetBoxAndChildren(boxWithChildren));
+
+            // Save changes to the database
+            _context.SaveChanges();
+        }
+    }
+
+    // Helper method to get a box and all its children recursively
+    private List<Box> RecursiveGetBoxAndChildren(Box box)
+    {
+        var boxes = new List<Box> { box };
+
+        foreach (var childBox in box.ChildrenBoxes)
+        {
+            boxes.AddRange(RecursiveGetBoxAndChildren(childBox));
+        }
+
+        return boxes;
+    }
 
  
 }
+
 
 [Obsolete("Use WarehouseManager if you want to give entire control to EF. OTHERWISE delete OnDelete Behavior and due it with the recursive code.")]
 public class WarehouseManagerInternalCascade : WarehouseManager
